@@ -7,15 +7,68 @@
 //
 
 import UIKit
+import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var restaurants : [Restaurant] = []
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let files = ["breakfast", "lunch", "dinner"]
+        
+        for file in files{
+        
+        if let path = Bundle.main.path(forResource: file , ofType: "plist") {
+            
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path))
+                let tempDict = try PropertyListSerialization.propertyList(from: data, format: nil) as! [String:Any]
+                let tempArray = tempDict["restaurants"] as! Array<[String:Any]>
+                
+                for dict in tempArray {
+                    
+                    let name = dict["name"]! as! String
+                    let address = dict["address"]! as! String
+                    let rating = String(describing: dict["aggregate_rating"]! as! NSNumber)
+                    let cuisine = dict["cuisines"]! as! String
+                    
+                    let cost = String(describing: dict["average_cost_for_two"]! as! NSNumber)
+                    let menu = dict["menu_url"]! as! String
+                    let photos = dict["photos_url"]! as! String
+                    let url = dict["url"]! as! String
+                    
+                    
+                    let latitude = Double(truncating: dict["latitude"]! as! NSNumber)
+                    let longitude = Double(truncating: dict["longitude"]! as! NSNumber)
+                    let location = CLLocation(latitude: latitude, longitude: longitude)
+                    
+                    let r = Restaurant(name: name, address: address,rating: rating, cuisine: cuisine, cost: cost, menu: menu , photos:photos, url: url, location: location)
+                    
+                    restaurants.append(r)
+                    
+                }
+                
+                for r in restaurants {
+                    print("Restaurants: \(r) \n")
+                }
+                
+            }
+            catch {
+                print(error)
+            }
+            }
+        }
+            
+        let restaurantList = Restaurants()
+        restaurantList.restaurantList = restaurants
+        let tabBarController = window?.rootViewController as? UITabBarController
+        let navVC = tabBarController!.viewControllers![1] as! UINavigationController
+        let favVC = navVC.viewControllers[0] as! FavouriteVC
+        favVC.restaurantList = restaurantList
+        
         return true
     }
 
