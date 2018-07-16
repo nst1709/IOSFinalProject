@@ -32,6 +32,7 @@ Wish list of features to be implemented:
 
 
 Description of the classes:
+
 View Controllers: It contains each of the view controllers for each of the app screens
 - The HomeVC is a TabBarController where the three categories are described. When the user clicks on either one of the categories, the data for that file is read and the ListVC TabBarController is pushed onto the screen.
 - The ListVC uses a custom cell for each of the restaurants in the described category. When the user clicks on one of the restaurants, the detailVC TabBarController is pushed on to screen and the details for that restaurant are passed to the DetailVC file.
